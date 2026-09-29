@@ -52,7 +52,7 @@ The **Waveshare UPS HAT (B) with 2×21700 cells** (designed for Pi 4) does **not
 
 ## First-boot setup (post-flash)
 
-After flashing the image and booting the Pi 5, SSH in via `root@192.168.1.1` (default OpenWrt address on `eth0`/`br-lan`). The image requires manual configuration — there is no first-boot wizard (see known issues).
+After flashing the image and booting the Pi 5, connect a computer **directly** to the Pi Ethernet jack and open LuCI at `http://10.41.254.1` or SSH as `root@10.41.254.1` (OpenMANET fresh-flash LAN on `eth0`/`br-lan`, `10.41.254.0/24`, blank password). Do not use `192.168.1.1` — that collides with a typical home router. The Morse AP wizard should load; set a root password from the banner, then run the wizard to pick region and mode.
 
 ### Morse USB radio PHY path fix
 
@@ -194,7 +194,7 @@ The board diffconfig is what determines image contents. To add a package, append
 ## Known issues / gotchas
 
 - **MM6108/SPI on Pi 5 doesn't bind.** Overlay (`mm610x-spi-pi5`), RP1 DMA, DesignWare SPI configs all in place. Chip is enumerated by SPI controller but driver doesn't attach. Open investigation.
-- **No `persistent-vars-storage-bcm2712` package.** Morse provides `persistent-vars-storage-bcm2711` for Pi 4 and `persistent-vars-storage-ubootenv` for u-boot devices; Pi 5 needs its own variant. This causes `wizard-config` (which depends on it) to be silently dropped from the image, which means no first-boot UCI defaults — users must run the LuCI AP wizard manually after first boot.
+- **`persistent-vars-storage-bcm2712` is in-tree.** Morse only ships `persistent-vars-storage-bcm2711` (Pi 4 EEPROM) and `persistent-vars-storage-ubootenv`. The Pi 5 variant lives in `package/utils/persistent-vars-storage-bcm2712/` and is selected in the board diffconfig so `wizard-config` actually installs. EEPROM writes are still unimplemented (same as Pi 4).
 - **`mac80211` Morse subsys patches dropped.** The 10 Morse 999-* patches (S1G ECSA, IBSS bridge, mesh, NDP block ack, etc.) were authored against backports 6.1.110 and didn't apply against 6.12.61. Currently dropped — must be re-authored before HaLow protocol features fully work. Alpha builds bind without them.
 - **Pi 4 SPI overlay (`999-001-morse-spi-fix-spi-bcm2835-driver`) not ported.** Used a v5.3-era of_gpio API that doesn't exist in 6.6. Pi 4 HaLow over SPI will regress until re-authored against 6.6 spi-bcm2835.
 - **Morse USB radio PHY path wrong after boot.** OpenWrt's `wifi detect` generates a truncated sysfs path for the MM8108 USB radio (`axi/...` instead of `platform/axi/.../3-1:1.0`). This causes `netifd` to fail with `Phy not found` on every boot. `wifi detect` also creates duplicate radio entries (e.g. `radio2`) with the correct path while leaving the broken `radio0`. Workaround: rc.local script that fixes the path (see "First-boot setup" above). Proper fix: patch the Morse `wifi detect` script or OpenWrt's `mac80211.sh` to emit the full platform path for USB devices on Pi 5.

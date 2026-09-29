@@ -143,6 +143,20 @@ bin/targets/bcm27xx/bcm2712/openwrt-bcm27xx-bcm2712-rpi-5-squashfs-factory.img.g
 
 Flash to an SD card with [Raspberry Pi Imager](https://www.raspberrypi.com/software/) (choose "Use custom" and select the `.img.gz`) and boot the Pi 5.
 
+## First boot
+
+The node does **not** use `192.168.1.1`. That address collides with a typical home router. Like an OpenMANET fresh flash, first-boot LAN is:
+
+- **Address:** `10.41.254.1`
+- **Subnet:** `10.41.254.0/24`
+- **DHCP:** the node hands out `10.41.254.100`–`10.41.254.249`
+
+Connect your computer **directly** to the Pi 5 Ethernet jack (do not put the node on your existing LAN). Set the computer to obtain an IP automatically — it should get a `10.41.254.x` lease. Then open LuCI at [http://10.41.254.1](http://10.41.254.1) or SSH as `root@10.41.254.1` (blank password).
+
+If you plug the node into a home router instead, your computer stays on `192.168.1.x` and cannot reach `10.41.254.1` without a static route.
+
+Open LuCI and use **Wizard** in the top bar. Set a root password from the yellow banner first, then run the wizard to pick region and mode.
+
 ## Setting the Region
 
 On first boot, the Morse Micro LuCI setup wizard prompts you to select your country/region. This sets the regulatory domain for both HaLow (S1G) and standard Wi-Fi, controlling available channels, TX power limits, and bandwidth options. S1G channel plans vary significantly by region (US, AU, and EU each use completely different frequency allocations), so getting this right matters.

@@ -32,6 +32,15 @@ raspberrypi,model-b-rev2)
 	ucidef_set_interface_lan "eth0"
 	;;
 
+# Pi 5 first-boot uses the OpenMANET fresh-flash LAN (10.41.254.1/24)
+# so it does not collide with a typical home router at 192.168.1.1.
+raspberrypi,500 |\
+raspberrypi,5-compute-module |\
+raspberrypi,5-model-b)
+	ucidef_set_interface "lan" device "eth0" protocol "static" \
+		ipaddr "10.41.254.1" netmask "255.255.255.0"
+	;;
+
 raspberrypi,model-zero-2 |\
 raspberrypi,model-zero-w)
 	ucidef_set_interface_lan "wlan0"

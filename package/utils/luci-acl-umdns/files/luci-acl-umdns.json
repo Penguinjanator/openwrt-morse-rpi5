@@ -1,0 +1,26 @@
+{
+	"luci-umdns": {
+		"description": "Grant umdns UCI access for the Morse first-boot wizard",
+		"read": {
+			"uci": [ "umdns" ]
+		},
+		"write": {
+			"uci": [ "umdns" ]
+		}
+	},
+	"luci-app-morseapwizard": {
+		"description": "Extend Morse wizard ACL with umdns (feed ACL omits it)",
+		"read": {
+			"uci": [ "umdns" ]
+		},
+		"write": {
+			"uci": [ "umdns" ]
+		}
+	},
+	"unauthenticated": {
+		"description": "Allow first-boot (no password) LuCI to read umdns",
+		"read": {
+			"uci": [ "umdns" ]
+		}
+	}
+}
