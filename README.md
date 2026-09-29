@@ -80,7 +80,7 @@ Beyond the base Morse HaLow stack, this build ships a curated set of extras read
 
 ## Building
 
-Tested on Ubuntu 22.04 / 24.04.
+Built on Google Cloud: Ubuntu 24.04 LTS, x86/64, Extreme persistent disk. More cores means a faster build (`make -j$(nproc)` uses every vCPU).
 
 For a visual walkthrough of the full process, including building the OpenWrt Morse Micro firmware from source, applying customization, and flashing the resulting image to an SD card, see the [build and flash video](https://youtu.be/2y5DjqLjSXw).
 
