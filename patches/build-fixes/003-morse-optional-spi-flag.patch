@@ -1,0 +1,12 @@
+--- a/spi.c
++++ b/spi.c
+@@ -1418,7 +1418,8 @@
+ #ifdef SPI_CONTROLLER_ENABLE_CS_GPIOD
+ 	spi->controller->flags |= SPI_CONTROLLER_ENABLE_CS_GPIOD;
+ #else
+-#warning "SPI_CONTROLLER_ENABLE_CS_GPIOD macro not defined"
++	/* Upstream kernels do not carry the Morse SPI core extension. */
++	dev_warn(&spi->dev, "controller lacks Morse GPIO chip-select extension\n");
+ #endif
+ #endif
+ 	morse_spi_xfer_init(mspi);

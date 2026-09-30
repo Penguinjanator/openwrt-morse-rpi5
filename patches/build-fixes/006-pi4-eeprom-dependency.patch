@@ -1,0 +1,11 @@
+--- a/feeds/morse/hardware/persistent-vars-storage-bcm2711/Makefile
++++ b/feeds/morse/hardware/persistent-vars-storage-bcm2711/Makefile
+@@ -21,7 +21,7 @@
+   SUBMENU:=Hardware
+ 	PROVIDES:=persistent-vars-storage
+ 	TITLE:=Reads (or maybe writes in future) key-value pairs from(/into) the RPi 4 EEPROM memory
+-	DEPENDS:= +bcm27xx-userland @TARGET_bcm27xx_bcm2711
++	DEPENDS:= +bcm27xx-utils @TARGET_bcm27xx_bcm2711
+ endef
+ 
+ define Build/Compile

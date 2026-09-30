@@ -40,7 +40,7 @@ Releases on this fork are tagged `vX.Y.Z[-alpha]` and built locally on the maint
 |---|---|---|---|
 | Seeed Studio HaLow HAT | MM6108 | SPI | **Not binding** — overlay + RP1 SPI/DMA in place, chip doesn't probe |
 | Gateworks MM8108 | MM8108 | USB | **Working** — verified 2026-04-26 |
-| Pi 5 onboard Wi-Fi | BCM43455 (Cypress) | SDIO | **Not working** — see known issues |
+| Pi 5 onboard Wi-Fi | BCM43455 (Cypress) | SDIO | **Attach issue fixed in source** — see resolved issues |
 | Panda Wireless dongle | Ralink RT5370 | USB | **Working** as 2.4 GHz AP — verified 2026-04-26 |
 | HaLow mesh / batman-adv | — | — | **Working** — verified 2026-04-26 with gate + point topology |
 
@@ -198,8 +198,11 @@ The board diffconfig is what determines image contents. To add a package, append
 - **`mac80211` Morse subsys patches dropped.** The 10 Morse 999-* patches (S1G ECSA, IBSS bridge, mesh, NDP block ack, etc.) were authored against backports 6.1.110 and didn't apply against 6.12.61. Currently dropped — must be re-authored before HaLow protocol features fully work. Alpha builds bind without them.
 - **Pi 4 SPI overlay (`999-001-morse-spi-fix-spi-bcm2835-driver`) not ported.** Used a v5.3-era of_gpio API that doesn't exist in 6.6. Pi 4 HaLow over SPI will regress until re-authored against 6.6 spi-bcm2835.
 - **Morse USB radio PHY path wrong after boot.** OpenWrt's `wifi detect` generates a truncated sysfs path for the MM8108 USB radio (`axi/...` instead of `platform/axi/.../3-1:1.0`). This causes `netifd` to fail with `Phy not found` on every boot. `wifi detect` also creates duplicate radio entries (e.g. `radio2`) with the correct path while leaving the broken `radio0`. Workaround: rc.local script that fixes the path (see "First-boot setup" above). Proper fix: patch the Morse `wifi detect` script or OpenWrt's `mac80211.sh` to emit the full platform path for USB devices on Pi 5.
-- **Pi 5 onboard Wi-Fi (BCM43455) not working.** Two issues: (1) Missing NVRAM file — the driver looks for `brcm/brcmfmac43455-sdio.raspberrypi,5-model-b.txt` which doesn't exist in the firmware package. Workaround: symlink the Pi 4 NVRAM (`ln -sf brcmfmac43455-sdio.raspberrypi,4-model-b.txt /lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,5-model-b.txt`). Proper fix: add the symlink to the `brcmfmac-nvram-43455-sdio` package. (2) Missing `brcmfmac-wcc` vendor module — kernel 6.6+ brcmfmac was refactored to load chip-specific vendor modules (`brcmfmac-wcc.ko` for Cypress/WCC chips). The mac80211 backports 6.12.61 expect it but `broadcom.mk` only builds the monolithic `brcmfmac.ko`. Error: `brcmf_fwvid_request_module: mod=wcc: failed` → `brcmf_attach failed`. Fix requires adding `CONFIG_BRCMFMAC_WCC` to the kernel config and a `kmod-brcmfmac-wcc` package definition in `package/kernel/mac80211/broadcom.mk`. Until fixed, onboard Wi-Fi is unavailable — use the Panda USB dongle for 2.4 GHz AP instead.
 - **No CI.** Builds happen on the maintainer's host. Reproduce with `boards/ekh-bcm2712/target_diffconfig` per the README.
+
+## Resolved issues
+
+- **Pi 5 onboard Wi-Fi (BCM43455) attach failure — fixed in source (2026-09-29).** Commit `9eebd2107d` adds the Pi 5 NVRAM symlinks to `brcmfmac-nvram-43455-sdio` in `package/firmware/linux-firmware/broadcom.mk` and includes the BCA, CYW, and WCC vendor modules in the existing `kmod-brcmfmac` package in `package/kernel/mac80211/broadcom.mk`. This addresses the missing NVRAM and `brcmf_fwvid_request_module: mod=wcc: failed` blockers. Images built with this commit include the fixes; the manual NVRAM symlink and proposed separate `kmod-brcmfmac-wcc` package are no longer needed. This records the source fix, not a new hardware test result.
 
 ## How to extend
 

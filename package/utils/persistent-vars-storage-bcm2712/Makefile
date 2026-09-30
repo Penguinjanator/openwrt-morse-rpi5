@@ -21,7 +21,7 @@ define Package/persistent-vars-storage-bcm2712
   SUBMENU:=Hardware
   PROVIDES:=persistent-vars-storage
   TITLE:=Read key-value pairs from the Raspberry Pi 5 EEPROM
-  DEPENDS:=+bcm27xx-userland @TARGET_bcm27xx_bcm2712
+  DEPENDS:=+bcm27xx-utils @TARGET_bcm27xx_bcm2712
 endef
 
 define Package/persistent-vars-storage-bcm2712/description

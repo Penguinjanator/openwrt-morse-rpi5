@@ -108,9 +108,14 @@ The `chown` ensures every file in the cloned tree is owned by your user. OpenWrt
 ```
 ./scripts/feeds update -a
 ./scripts/feeds install -a
+./scripts/apply-build-fixes.sh
 ```
 
 This pulls the Morse HaLow, OpenWrt, and LuCI package feeds (defined in `feeds.conf.default`) and registers their packages with the build system.
+
+The Morse, LuCI, and prpl feeds are pinned to matching 2.9-dev snapshots, including Morse driver/firmware 1.16.4. The fix script adapts the driver and LuCI to this SDK and removes two unused prpl UPnP forks that cause Kconfig dependency loops. Run the script again after updating feeds; repeated runs are safe.
+
+The Rust recipe is maintained in-tree at `package/lang/rust/` and is automatically preferred over the packages feed recipe. It builds LLVM from the hash-verified Rust release sources, avoiding the expired Rust CI LLVM download without a manual patch. The first build takes longer; subsequent builds reuse the compiled toolchain. Do not force-install the feed's Rust package with `./scripts/feeds install -f rust`, since that overrides this fix. For existing checkouts, the fix script removes the old Rust feed link so the in-tree recipe is used.
 
 ### 4. Drop in the Pi 5 config
 
@@ -130,6 +135,7 @@ make -j$(nproc) download
 ### 6. Build
 
 ```
+set -o pipefail
 make -j$(nproc) V=sc 2>&1 | tee log.txt
 ```
 

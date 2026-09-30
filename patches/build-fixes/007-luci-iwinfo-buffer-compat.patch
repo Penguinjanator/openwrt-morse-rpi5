@@ -1,0 +1,14 @@
+--- a/feeds/luci/modules/luci-mod-status/src/luci-bwc.c
++++ b/feeds/luci/modules/luci-mod-status/src/luci-bwc.c
+@@ -39,6 +39,11 @@
+ #include <dlfcn.h>
+ #include <iwinfo.h>
+ 
++/* OpenWrt 23.05 uses one buffer size for all iwinfo list operations. */
++#ifndef IWINFO_ASSOCLIST_BUFSIZE
++#define IWINFO_ASSOCLIST_BUFSIZE IWINFO_BUFSIZE
++#endif
++
+ #define STEP_COUNT	60
+ #define STEP_TIME	1
+ #define TIMEOUT		10

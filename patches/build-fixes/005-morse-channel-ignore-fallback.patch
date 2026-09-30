@@ -1,0 +1,14 @@
+--- a/morse.h
++++ b/morse.h
+@@ -50,6 +50,11 @@
+ #define MAC80211_VERSION_CODE MAC80211_BACKPORT_VERSION_CODE
+ #else
+ #define MAC80211_VERSION_CODE LINUX_VERSION_CODE
++#endif
++
++/* Match the upstream Morse fallback when its cfg80211 extension is absent. */
++#ifndef HAS_IEEE80211_CHAN_IGNORE
++#define IEEE80211_CHAN_IGNORE 0
+ #endif
+ 
+ #define MORSE_SEMVER_GET_MAJOR(x) (((x) >> 22) & 0x3FF)
