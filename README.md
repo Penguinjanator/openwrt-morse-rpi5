@@ -80,7 +80,9 @@ Beyond the base Morse HaLow stack, this build ships a curated set of extras read
 
 ## Building
 
-The `v0.4.0-alpha` images were built on a Google Compute Engine VM running Ubuntu 22.04.5 LTS (`x86_64`), with 96 vCPUs, approximately 94 GiB of usable RAM, and a 500 GiB disk. These are the tested build host specifications, not minimum requirements. `make -j$(nproc)` uses every available vCPU; reduce parallelism on machines with less RAM.
+The `v0.4.0-alpha` images were built on a Google Compute Engine VM running Ubuntu 22.04.5 LTS (`x86_64`), with 96 vCPUs, approximately 94 GiB of usable RAM, and a 500 GiB Extreme persistent disk for fast read/write operations during compilation. These are the tested build host specifications, not minimum requirements. `make -j$(nproc)` uses every available vCPU; reduce parallelism on machines with less RAM.
+
+The final incremental build, including compilation and image generation, took approximately 6 minutes on this VM, based on build-log timestamps. It reused previously compiled components.
 
 For a visual walkthrough of the full process, including building the OpenWrt Morse Micro firmware from source, applying customization, and flashing the resulting image to an SD card, see the [build and flash video](https://youtu.be/2y5DjqLjSXw).
 
