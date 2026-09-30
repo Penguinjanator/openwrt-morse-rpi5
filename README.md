@@ -82,8 +82,6 @@ Beyond the base Morse HaLow stack, this build ships a curated set of extras read
 
 The `v0.4.0-alpha` images were built on a Google Compute Engine VM running Ubuntu 22.04.5 LTS (`x86_64`), with 96 vCPUs, approximately 94 GiB of usable RAM, and a 500 GiB Extreme persistent disk for fast read/write operations during compilation. These are the tested build host specifications, not minimum requirements. `make -j$(nproc)` uses every available vCPU; reduce parallelism on machines with less RAM.
 
-The final incremental build, including compilation and image generation, took approximately 6 minutes on this VM, based on build-log timestamps. It reused previously compiled components.
-
 For a visual walkthrough of the full process, including building the OpenWrt Morse Micro firmware from source, applying customization, and flashing the resulting image to an SD card, see the [build and flash video](https://youtu.be/2y5DjqLjSXw).
 
 ### 1. Install build dependencies
@@ -167,26 +165,7 @@ Open LuCI and use **Wizard** in the top bar. Set a root password from the yellow
 
 ## Setting the Region
 
-On first boot, the Morse Micro LuCI setup wizard prompts you to select your country/region. This sets the regulatory domain for both HaLow (S1G) and standard Wi-Fi, controlling available channels, TX power limits, and bandwidth options. S1G channel plans vary significantly by region (US, AU, and EU each use completely different frequency allocations), so getting this right matters.
-
-To change the region after initial setup:
-
-**LuCI web UI:**
-
-1. Go to **Network → Wireless**
-2. For **each radio** (HaLow, onboard Wi-Fi, USB dongle, etc.), click **Edit**
-3. Confirm the **Country Code** is set correctly (e.g. **United States**)
-4. Click **Save** on that radio
-5. Back on the Wireless overview page, click **Save & Apply**
-
-That last step matters — editing each radio and saving individually is not enough; you must **Save & Apply** on the main Wireless page for the regulatory domain to take effect.
-
-**CLI:**
-```sh
-uci set wireless.radio0.country='US'
-uci commit wireless
-wifi reload
-```
+Go to **Network → Wireless**, click **Edit** on each radio, ensure the correct **Country Code** is selected, and click **Save**. Then return to the main Wireless page and click **Save & Apply** to apply the settings for all radios. The country code warning should then clear.
 
 ## Upstream sources
 
